@@ -1,0 +1,6 @@
+FROM nextcloud:apache
+
+RUN  apt-get update && apt-get install  -y --no-install-recommends ffmpeg  ghostscript libmagickcore-6.q16-6-extra procps bzip2 libbz2-dev; \
+rm -rf /var/lib/apt/lists/*
+
+RUN /bin/bash docker-php-ext-install bz2
