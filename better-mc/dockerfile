@@ -2,8 +2,7 @@ FROM alpine:3.19
 
 ENV XMX="4g" XMS="2g"
 
-RUN mkdir -p /app/server
-RUN mkdir -p /app/server
+RUN mkdir -p /app/server/world
 WORKDIR /app/server
 
 RUN apk add openjdk21 --no-cache
@@ -13,6 +12,10 @@ RUN wget https://www.curseforge.com/api/v1/mods/876781/files/4951582/download -O
 RUN wget https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.1-47.2.17/forge-1.20.1-47.2.17-installer.jar -O /app/instaler.jar; java -jar ../instaler.jar  --installServer; rm /app/server/start.ps1 /app/server/READ_ME.txt /app/server/start.sh /app/instaler.jar
 
 RUN echo "eula=true" > /app/server/eula.txt
-
 EXPOSE 25565/udp
+
+
+RUN adduser -D minecraft
+RUN chown minecraft:minecraft /app -R
+USER minecraft:minecraft
 ENTRYPOINT java -Xms${XMS} -Xmx${XMX} @libraries/net/minecraftforge/forge/1.20.1-47.2.17/unix_args.txt

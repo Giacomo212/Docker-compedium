@@ -5,10 +5,12 @@ services:
       - "25565:25565"
       - "25565:25565/udp"
     volumes:
-      - ./world:/app/server/world
+      - world:/app/server/world
       - type: bind
         source: ./server.properties
         target: /app/server/server.properties
     environment:
       XMX: 8g
       XMS: 4g
+volumes:
+  world:
