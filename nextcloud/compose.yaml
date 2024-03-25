@@ -8,7 +8,10 @@ services:
     volumes:
       - db:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
     env_file:
       - db.env
 
@@ -25,6 +28,9 @@ services:
     environment:
       - MYSQL_HOST=db
       - REDIS_HOST=redis
+      - VIRTUAL_HOST
+      - LETSENCRYPT_HOST
+      - LETSENCRYPT_EMAIL
     env_file:
       - db.env
     depends_on:
