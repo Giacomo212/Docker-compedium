@@ -1,10 +1,15 @@
 services:
   db:
-    image: mariadb:latest
+    image: mariadb:lts
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: always
     volumes:
       - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
     env_file:
       - db.env
   redis:
@@ -22,8 +27,8 @@ services:
       - VIRTUAL_HOST
       - LETSENCRYPT_HOST
       - LETSENCRYPT_EMAIL
-      - PHP_UPLOAD_LIMIT=16384M
-      - APACHE_BODY_LIMIT=17179869184
+      - PHP_UPLOAD_LIMIT=81920M
+      - APACHE_BODY_LIMIT=85899345920
     env_file:
       - db.env
     depends_on:
@@ -47,9 +52,11 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
+      - "2121:2121"
     volumes:
-      - proxy/Caddyfile:/etc/caddy/Caddyfile
+      - type: bind
+        source: ./proxy/Caddyfile
+        target: /etc/caddy/Caddyfile
       - caddy_config:/config
     networks:
       - proxy-tier
