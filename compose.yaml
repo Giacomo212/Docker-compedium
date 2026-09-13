@@ -1,0 +1,4 @@
+include:
+  - proxy/compose.yaml
+  - nextcloud/compose.yaml
+  - wordpress/compose.yaml

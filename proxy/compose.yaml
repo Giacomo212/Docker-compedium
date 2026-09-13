@@ -1,0 +1,26 @@
+services:
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"            # TYLKO do walidacji ACME (Let's Encrypt) - HTTP-01
+      - "2121:2121"        # faktyczny ruch użytkowników do Nextcloud
+      - "2121:2121/udp"    # HTTP/3 (QUIC)
+    volumes:
+      - type: bind
+        source: ./Caddyfile
+        target: /etc/caddy/Caddyfile
+      - caddy_data:/data       # certy Let's Encrypt - MUSI być trwały wolumen
+      - caddy_config:/config
+      - type: bind
+        source: /var/log/caddy
+        target: /var/log/caddy
+    networks:
+      - proxy-tier
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  proxy-tier: {}

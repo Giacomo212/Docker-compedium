@@ -12,9 +12,13 @@ services:
       - MYSQL_DATABASE
     env_file:
       - db.env
+    networks:  
+      - nextcloud_internal
   redis:
     image: redis:alpine
     restart: always
+    networks:  
+      - nextcloud_internal   
   app:
     build: 
       context: .
@@ -34,7 +38,7 @@ services:
       - redis
     networks:
       - proxy-tier
-      - default
+      - nextcloud_internal   
   cron:
     build: 
       context: .
@@ -45,25 +49,10 @@ services:
     depends_on:
       - db
       - redis
-  caddy:
-    image: caddy:latest
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "2121:2121"
-      - "2121:2121/udp"
-    volumes:
-      - type: bind
-        source: ./proxy/Caddyfile
-        target: /etc/caddy/Caddyfile
-      - caddy_config:/config
-    networks:
-      - proxy-tier
-
 volumes:
   db:
   nextcloud:
   html:
-  caddy_config:
 networks:
   proxy-tier:
+  nextcloud_internal:

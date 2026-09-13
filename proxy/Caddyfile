@@ -1,0 +1,39 @@
+{
+    auto_https disable_redirects
+}
+giacomo.net.pl:2121 {
+    reverse_proxy app:80
+        header {
+        Strict-Transport-Security "max-age=15552000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "no-referrer-when-downgrade"
+        -Server
+    }
+    log {
+        output file /var/log/caddy/giacomo.access.log
+    }
+}
+
+http://192.168.50.225 {
+    reverse_proxy wp_app:80
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "no-referrer-when-downgrade"
+        -Server
+    }
+
+    @xmlrpc path /xmlrpc.php
+    respond @xmlrpc 403
+
+    @authorscan {
+        path /
+        query author=*
+    }
+    respond @authorscan 403
+
+    log {
+        output file /var/log/caddy/panic.access.log
+    }
+}

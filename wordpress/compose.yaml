@@ -1,0 +1,40 @@
+services:
+  wp_db:
+    image: mariadb:lts
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - wp_db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
+    env_file:
+      - db.env
+    networks:
+      - wordpress_internal   # TYLKO wewnątrz świata WordPress
+
+  wp_app:
+    image: wordpress:apache
+    restart: always
+    volumes:
+      - wp_data:/var/www/html
+    environment:
+      - WORDPRESS_DB_HOST=wp_db
+      - WORDPRESS_DB_USER
+      - WORDPRESS_DB_PASSWORD
+      - WORDPRESS_DB_NAME
+    env_file:
+      - db.env
+    depends_on:
+      - wp_db
+    networks:
+      - proxy-tier           # widoczny dla Caddy
+      - wordpress_internal   # widoczny dla wp_db
+volumes:
+  wp_db:
+  wp_data:
+networks:
+  proxy-tier: {}
+  wordpress_internal: {}
